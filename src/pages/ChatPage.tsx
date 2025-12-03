@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiClient } from '../api/client';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
-import remarkGfm from 'remark-gfm'; // Import remarkGfm
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessage {
   text: string;
@@ -23,50 +23,86 @@ function ChatPage() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() !== '') {
-      const userMessage = { text: newMessage, isUser: true };
-      setMessages([...messages, userMessage]);
-      setNewMessage('');
-      setIsLoading(true);
+    if (newMessage.trim() === '') return;
 
+    const userMessage = { text: newMessage, isUser: true };
+    setMessages((prev) => [...prev, userMessage]);
+    setNewMessage('');
+    setIsLoading(true);
+
+    const maxRetries = 3;
+    let attempt = 0;
+
+    const send = async (): Promise<void> => {
       try {
-        const response = await apiClient.sendMessageToChatbot(newMessage);
+        const response = await apiClient.sendMessageToChatbot(userMessage.text);
         const botMessage = { text: response.reply, isUser: false };
-        setMessages([...messages, userMessage, botMessage]);
+        setMessages((prev) => [...prev, botMessage]);
       } catch (error) {
         console.error('Error sending message:', error);
-        const errorMesssage = {text: "Error communicating with ClassMate AI", isUser: false}
-        setMessages([...messages, userMessage, errorMesssage])
+        if (attempt < maxRetries) {
+          attempt++;
+          console.log(`Retrying... attempt ${attempt}`);
+          await new Promise((res) => setTimeout(res, 1000));
+          await send();
+        } else {
+          const errorMessage = {
+            text: 'Error communicating with ClassMate AI',
+            isUser: false,
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        }
       } finally {
         setIsLoading(false);
       }
-    }
+    };
+
+    await send();
   };
 
   return (
     <div className="flex flex-col h-full p-4">
       <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4">
         {messages.map((message, index) => (
-          <div key={index} className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}>
-            <div className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-100' : 'bg-gray-100'}`}>
+          <div
+            key={index}
+            className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}
+          >
+            <div
+              className={`inline-block p-2 rounded-lg ${
+                message.isUser ? 'bg-blue-100' : 'bg-gray-100'
+              }`}
+            >
               {message.isUser ? (
-                <p>{message.text}</p>
+                <p className="whitespace-pre-wrap">{message.text}</p>
               ) : (
-                <ReactMarkdown children={message.text} remarkPlugins={[remarkGfm]} /> // Render bot messages in Markdown
+                <ReactMarkdown
+                  children={message.text}
+                  remarkPlugins={[remarkGfm]}
+                />
               )}
             </div>
           </div>
         ))}
-        {isLoading && <div className="text-left"><LoadingSpinner size="sm" /></div>}
+        {isLoading && (
+          <div className="text-left">
+            <LoadingSpinner size="sm" />
+          </div>
+        )}
       </div>
       <div className="flex items-center">
-        <input
-          type="text"
-          className="flex-1 p-2 border rounded-lg mr-2"
+        <textarea
+          className="flex-1 p-2 border rounded-lg mr-2 resize-none"
           placeholder="Type your message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+            // Shift+Enter naturally adds a newline
+          }}
         />
         <button
           className="bg-blue-500 text-white p-2 rounded-lg"

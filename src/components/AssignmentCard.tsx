@@ -26,7 +26,6 @@ export function AssignmentCard({
   const dueDate = new Date(assignment.dueDate);
   const statusVariants = {
     upcoming: 'info',
-    overdue: 'error',
     submitted: 'warning',
     graded: 'success'
   } as const;

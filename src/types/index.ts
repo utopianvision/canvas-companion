@@ -25,7 +25,7 @@ export interface Assignment {
   dueDate: string;
   points: number;
   submissionType: string;
-  status: 'upcoming' | 'overdue' | 'submitted' | 'graded';
+  status: 'upcoming' | 'submitted' | 'graded';
   priority: 'low' | 'medium' | 'high';
   grade?: number;
 }

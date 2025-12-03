@@ -12,7 +12,7 @@ export function AssignmentsPage({
   assignments,
   isLoading
 }: AssignmentsPageProps) {
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'overdue' | 'submitted'>('all');
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'submitted' | 'graded'>('all');
   if (isLoading) {
     return <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -25,8 +25,8 @@ export function AssignmentsPage({
   const statusCounts = {
     all: assignments.length,
     upcoming: assignments.filter(a => a.status === 'upcoming').length,
-    overdue: assignments.filter(a => a.status === 'overdue').length,
-    submitted: assignments.filter(a => a.status === 'submitted').length
+    submitted: assignments.filter(a => a.status === 'submitted').length,
+    graded: assignments.filter(a => a.status === 'graded').length
   };
   return <div className="p-8">
       <div className="mb-8">
@@ -43,11 +43,11 @@ export function AssignmentsPage({
           <Button variant={filter === 'upcoming' ? 'primary' : 'ghost'} size="sm" onClick={() => setFilter('upcoming')}>
             Upcoming ({statusCounts.upcoming})
           </Button>
-          <Button variant={filter === 'overdue' ? 'primary' : 'ghost'} size="sm" onClick={() => setFilter('overdue')}>
-            Overdue ({statusCounts.overdue})
-          </Button>
           <Button variant={filter === 'submitted' ? 'primary' : 'ghost'} size="sm" onClick={() => setFilter('submitted')}>
             Submitted ({statusCounts.submitted})
+          </Button>
+          <Button variant={filter === 'graded' ? 'primary' : 'ghost'} size="sm" onClick={() => setFilter('graded')}>
+            Graded ({statusCounts.graded})
           </Button>
         </div>
       </div>

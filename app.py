@@ -3,7 +3,7 @@ from flask_cors import CORS
 from canvasapi import Canvas
 from canvasapi.exceptions import InvalidAccessToken, ResourceDoesNotExist
 import google.generativeai as genai
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 import re
 from html import unescape
 
@@ -154,8 +154,6 @@ def get_assignments():
         canvas = canvas_sessions[session_id]['canvas']
         user = canvas_sessions[session_id]['user']
         
-        one_week_ago = datetime.now() - timedelta(days=7)
-        
         assignments = []
         courses = user.get_courses(enrollment_state='active')
         
@@ -169,32 +167,21 @@ def get_assignments():
                     continue
                 
                 try:
+                    status = "past"
+                    
                     due_datetime = datetime.fromisoformat(due_date.replace('Z', '+00:00'))
-                    
-                    if due_datetime.replace(tzinfo=None) < one_week_ago:
-                        continue
-                    
-                    status = 'upcoming'
-                    if due_datetime < datetime.now(due_datetime.tzinfo):
-                        status = 'overdue'
+                    if due_datetime >= datetime.now(UTC):
+                        status = "upcoming"
                     
                     try:
                         submission = assignment.get_submission(user.id)
                         if getattr(submission, 'submitted_at', None):
-                            status = 'submitted'
                             if getattr(submission, 'grade', None):
-                                status = 'graded'
+                                status = "graded"
+                            else:
+                                status = "submitted"
                     except:
                         pass
-                    
-                    priority = 'low'
-                    days_until_due = (due_datetime - datetime.now(due_datetime.tzinfo)).days
-                    points = getattr(assignment, 'points_possible', 0)
-                    
-                    if days_until_due <= 2 or points >= 100:
-                        priority = 'high'
-                    elif days_until_due <= 7 or points >= 50:
-                        priority = 'medium'
                     
                     # Clean HTML from description
                     raw_description = getattr(assignment, 'description', '')
@@ -211,7 +198,6 @@ def get_assignments():
                         'points': getattr(assignment, 'points_possible', 0),
                         'submissionType': getattr(assignment, 'submission_types', ['none'])[0],
                         'status': status,
-                        'priority': priority
                     }
                     
                     assignments.append(assignment_data)

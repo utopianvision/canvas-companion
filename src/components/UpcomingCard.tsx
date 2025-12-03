@@ -25,7 +25,6 @@ export function UpcomingCard({
   const now = new Date();
   const hoursUntilDue = Math.floor((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60));
   const isUrgent = hoursUntilDue < 24 && hoursUntilDue > 0;
-  const isOverdue = hoursUntilDue < 0;
 
   return (
     <>
@@ -41,15 +40,14 @@ export function UpcomingCard({
                 }}>
                   {assignment.courseName}
                 </span>
-                {isOverdue && <AlertCircle className="w-4 h-4 text-red-500" />}
               </div>
               <h4 className="font-medium text-gray-900 truncate text-left">
                 {assignment.title}
               </h4>
               <div className="flex items-center mt-2">
                 <Clock className="w-4 h-4 text-gray-400 mr-1" />
-                <span className={`text-sm ${isOverdue ? 'text-red-600 font-medium' : isUrgent ? 'text-orange-600' : 'text-gray-600'}`}>
-                  {isOverdue ? 'Overdue' : `Due ${dueDate.toLocaleDateString('en-US', {
+                <span className={`text-sm ${isUrgent ? 'text-orange-600' : 'text-gray-600'}`}>
+                  {`Due ${dueDate.toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
                   hour: 'numeric',

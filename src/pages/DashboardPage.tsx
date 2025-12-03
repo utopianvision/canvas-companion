@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, CheckSquare, AlertCircle, TrendingUp } from 'lucide-react';
+import { BookOpen, CheckSquare, AlertCircle, TrendingUp, Files } from 'lucide-react';
 import { StatsCard } from '../components/StatsCard';
 import { UpcomingCard } from '../components/UpcomingCard';
 import { Card } from '../components/Card';
@@ -23,8 +23,7 @@ export function DashboardPage({
         </div>
       </div>;
   }
-  const upcomingAssignments = assignments.filter(a => a.status === 'upcoming' || a.status === 'overdue').sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()).slice(0, 5);
-  const overdueCount = assignments.filter(a => a.status === 'overdue').length;
+  const upcomingAssignments = assignments.filter(a => a.status === 'upcoming').sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()).slice(0, 5);
   const completedCount = assignments.filter(a => a.status === 'submitted').length;
   return <div className="p-8">
       <div className="mb-8">
@@ -37,8 +36,8 @@ export function DashboardPage({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard title="Active Courses" value={courses.length} icon={BookOpen} color="bg-blue-600" />
         <StatsCard title="Pending Assignments" value={upcomingAssignments.length} icon={CheckSquare} color="bg-purple-600" />
-        <StatsCard title="Overdue Items" value={overdueCount} icon={AlertCircle} color="bg-red-600" />
-        <StatsCard title="Completed Assignments" value={completedCount} icon={TrendingUp} color="bg-green-600" />
+        <StatsCard title="Submitted Assignments" value={completedCount} icon={TrendingUp} color="bg-green-600" />
+        <StatsCard title="Total Assignments" value={assignments.length} icon={Files} color="bg-red-600" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

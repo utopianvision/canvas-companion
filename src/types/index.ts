@@ -9,12 +9,14 @@ export interface Course {
   credits: number;
   schedule: CourseSchedule[];
 }
+
 export interface CourseSchedule {
   day: string;
   startTime: string;
   endTime: string;
   location: string;
 }
+
 export interface Assignment {
   id: string;
   courseId: string;
@@ -29,6 +31,7 @@ export interface Assignment {
   priority: 'low' | 'medium' | 'high';
   grade?: number;
 }
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -39,6 +42,7 @@ export interface CalendarEvent {
   endTime?: string;
   location?: string;
 }
+
 export interface StudyPlan {
   id: string;
   generatedAt: string;
@@ -47,12 +51,14 @@ export interface StudyPlan {
   dailyPlans: DailyPlan[];
   tips: string[];
 }
+
 export interface DailyPlan {
   date: string;
   dayName: string;
   tasks: StudyTask[];
   totalHours: number;
 }
+
 export interface StudyTask {
   time: string;
   duration: number;
@@ -60,9 +66,22 @@ export interface StudyTask {
   task: string;
   priority: 'low' | 'medium' | 'high';
 }
+
 export interface UserProfile {
   name: string;
   email: string;
   canvasUrl: string;
   avatar?: string;
 }
+
+// Centralized Page type
+export type Page =
+  | 'login'
+  | 'dashboard'
+  | 'courses'
+  | 'assignments'
+  | 'calendar'
+  | 'study-plan'
+  | 'settings'
+  | 'chat'
+  | 'notetaker';

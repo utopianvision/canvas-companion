@@ -1,48 +1,24 @@
 import { Home, BookOpen, CheckSquare, Calendar, Brain, Settings, LogOut, Bot, Mic } from 'lucide-react';
-type Page = 'dashboard' | 'courses' | 'assignments' | 'calendar' | 'study-plan' | 'settings' | 'chat'; // Add 'chat'
+import { Page } from '../types';
+
 interface SidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
   onLogout: () => void;
 }
-const navigation = [{
-  name: 'Dashboard',
-  icon: Home,
-  path: 'dashboard' as Page
-}, {
-  name: 'Courses',
-  icon: BookOpen,
-  path: 'courses' as Page
-}, {
-  name: 'Assignments',
-  icon: CheckSquare,
-  path: 'assignments' as Page
-}, {
-  name: 'Calendar',
-  icon: Calendar,
-  path: 'calendar' as Page
-}, {
-  name: 'Study Plan',
-  icon: Brain,
-  path: 'study-plan' as Page
-}, {
-  name: 'Chat',
-  icon: Bot,
-  path: 'chat' as Page
-}, {
-  name: 'Notetaker',
-  icon: Mic,
-  path: 'notetaker' as Page
-}, {
-  name: 'Settings',
-  icon: Settings,
-  path: 'settings' as Page
-}];
-export function Sidebar({
-  currentPage,
-  onNavigate,
-  onLogout
-}: SidebarProps) {
+
+const navigation = [
+  { name: 'Dashboard', icon: Home, path: 'dashboard' as Page },
+  { name: 'Courses', icon: BookOpen, path: 'courses' as Page },
+  { name: 'Assignments', icon: CheckSquare, path: 'assignments' as Page },
+  { name: 'Calendar', icon: Calendar, path: 'calendar' as Page },
+  { name: 'Study Plan', icon: Brain, path: 'study-plan' as Page },
+  { name: 'Chat', icon: Bot, path: 'chat' as Page },
+  { name: 'Notetaker', icon: Mic, path: 'notetaker' as Page },
+  { name: 'Settings', icon: Settings, path: 'settings' as Page },
+];
+
+export function Sidebar({ currentPage, onNavigate, onLogout }: SidebarProps) {
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
       <div className="p-6 border-b border-gray-200">
@@ -58,14 +34,16 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {navigation.map(item => {
+        {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = currentPage === item.path;
           return (
             <button
               key={item.name}
               onClick={() => onNavigate(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'
+              }`}
             >
               <Icon className="w-5 h-5" />
               <span>{item.name}</span>
@@ -86,5 +64,3 @@ export function Sidebar({
     </div>
   );
 }
-
-export default Sidebar;

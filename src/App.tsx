@@ -8,11 +8,9 @@ import { CalendarPage } from './pages/CalendarPage';
 import { StudyPlanPage } from './pages/StudyPlanPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { apiClient, getSessionId, clearSessionId } from './api/client';
-import { Course, Assignment } from './types';
+import { Course, Assignment, Page } from './types';
 import ChatPage from './pages/ChatPage';
-import NoteTakerPage from './pages/NoteTakerPage'; // Import NoteTakerPage
-
-type Page = 'login' | 'dashboard' | 'courses' | 'assignments' | 'calendar' | 'study-plan' | 'settings' | 'chat' | 'notetaker'; // Add 'notetaker'
+import NoteTakerPage from './pages/NoteTakerPage';
 
 export function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login');
@@ -32,8 +30,9 @@ export function App() {
   useEffect(() => {
     const sessionId = getSessionId();
     if (sessionId) {
-      apiClient.getUser()
-        .then(userData => {
+      apiClient
+        .getUser()
+        .then((userData) => {
           setIsAuthenticated(true);
           setCurrentPage('dashboard');
           loadData();
@@ -103,6 +102,7 @@ export function App() {
             courses={courses}
             assignments={assignments}
             isLoading={isLoadingData}
+            onNavigate={navigate} // pass navigate
           />
         );
       case 'courses':
@@ -123,31 +123,30 @@ export function App() {
       case 'chat':
         return <ChatPage />;
       case 'notetaker':
-        return <NoteTakerPage />; // Add NoteTakerPage route
+        return <NoteTakerPage />;
       default:
         return (
           <DashboardPage
             courses={courses}
             assignments={assignments}
             isLoading={isLoadingData}
+            onNavigate={navigate}
           />
         );
     }
   };
 
-  return (
-    isAuthenticated ? (
-      <Layout
-        currentPage={currentPage}
-        onNavigate={navigate}
-        onLogout={handleLogout}
-        user={user}
-      >
-        {renderPage()}
-      </Layout>
-    ) : (
-      <LoginPage onLogin={handleLogin} />
-    )
+  return isAuthenticated ? (
+    <Layout
+      currentPage={currentPage}
+      onNavigate={navigate}
+      onLogout={handleLogout}
+      user={user}
+    >
+      {renderPage()}
+    </Layout>
+  ) : (
+    <LoginPage onLogin={handleLogin} />
   );
 }
 

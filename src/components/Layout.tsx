@@ -1,11 +1,12 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { Page } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
-  currentPage: string;
-  onNavigate: (page: string) => void;
+  currentPage: Page;
+  onNavigate: (page: Page) => void;
   onLogout: () => void;
   user: any;
 }
@@ -15,7 +16,7 @@ export function Layout({
   currentPage,
   onNavigate,
   onLogout,
-  user
+  user,
 }: LayoutProps) {
   return (
     <div className="flex h-screen bg-gray-50">

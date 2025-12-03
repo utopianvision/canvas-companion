@@ -23,7 +23,7 @@ export function DashboardPage({
         </div>
       </div>;
   }
-  const upcomingAssignments = assignments.filter(a => a.status === 'upcoming').sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()).slice(0, 5);
+  const upcomingAssignments = assignments.filter(a => a.status === 'upcoming').sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const completedCount = assignments.filter(a => a.status === 'submitted').length;
   return <div className="p-8">
       <div className="mb-8">
